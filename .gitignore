@@ -1,0 +1,131 @@
+# Super-EQSOrchestrator — restrictive allowlist .gitignore
+
+# 1) Ignore everything by default
+*
+
+# 2) Re-allow directories (parents must be visible for negations to work)
+!*/
+
+# 3) Whitelist repo/text metadata
+!.gitignore
+!.gitattributes
+!.editorconfig
+!LICENSE
+!NOTICE
+!README.md
+!AGENTS.md
+!CONTRIBUTING.md
+!DECISIONS.md
+!CHANGELOG.md
+!TESTING.md
+
+# 3b) Whitelist plugin/project manifests & configs (text)
+!.uplugin
+!.uproject
+!.upluginmanifest
+!.ini
+!.cfg
+!.json
+!.toml
+!.yaml
+!.yml
+!.txt
+!*.md
+
+# 3c) Whitelist source code (C++ / headers / Build.cs / Python)
+!*.h
+!*.hpp
+!*.hh
+!*.inl
+!*.cpp
+!*.cc
+!*.cxx
+!*.Build.cs
+!Scripts/**/*.py
+!*.py
+
+# 3d) Whitelist simple text scripts (optional helpers; still text)
+!*.sh
+!*.ps1
+!*.bat
+!*.cmd
+
+# 4) Explicit ignores (UE, IDE, binaries, assets, outputs)
+
+# UE generated/build output
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Dist/
+
+# Editor/IDE
+.vs/
+.vscode/
+*.sln
+*.VC.db
+*.opendb
+*.suo
+*.user
+.idea/
+*.iml
+
+# Compiled/binary objects & libs
+*.obj
+*.o
+*.lo
+*.a
+*.lib
+*.dll
+*.dylib
+*.so
+*.exp
+*.pdb
+*.ipdb
+*.iobj
+*.pch
+*.rsp
+*.cache
+*.log
+*.tmp
+
+# UE packaged/shader/asset binaries
+*.pak
+*.ucas
+*.utoc
+*.ubulk
+*.ushaderbytecode
+*.ushadercache
+*.ushadermap
+*.uasset
+*.umap
+
+# Media & images (including plugin icon)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.tga
+*.bmp
+*.psd
+*.svg
+*.ico
+
+# Audio/video
+*.wav
+*.mp3
+*.ogg
+*.flac
+*.mp4
+*.mov
+*.avi
+
+# Archives
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+*.bz2
+*.xz
