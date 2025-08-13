@@ -3,8 +3,11 @@
 # 1) Ignore everything by default
 *
 
-# 2) Re-allow directories (parents must be visible for negations to work)
+
+# 2) Re-allow directories recursively (parents must be visible for negations to work)
 !*/
+!**/
+
 
 # 3) Whitelist repo/text metadata
 !.gitignore
