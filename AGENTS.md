@@ -152,6 +152,7 @@ TESTS (unit/integration names, locations, expected outputs/logs)
 CLI/USAGE (commands and expected exit codes) — if relevant
 
 ACCEPTANCE (what must be green)
+C++ code must compile successfully.
 
 CHANGELOG (prepend exact TITLE line)
 
@@ -279,6 +280,7 @@ CLI/USAGE (if relevant)
 
 ACCEPTANCE
 - What must be green (build/tests/CI).
+- C++ code must compile successfully.
 
 CHANGELOG (prepend this exact line)
 <repeat the TITLE line>
