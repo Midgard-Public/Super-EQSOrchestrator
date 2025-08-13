@@ -282,7 +282,7 @@ Manual Human Verification
 * Enforced **public-API doc blocks** (multi-section) in headers.
 * Strong preference for **early-out** patterns and explicit guard clauses.
 * **`check` disallowed**; `ensure` rare + logged via `ensureMsgf`.
-* Mandatory use of **tabs** and **Allman braces** (matches Epic; reiterated here).
+* Mandatory use of **spaces** (4 spaces per indentation level) and **Allman braces** (matches Epic; reiterated here).
 * Aggressive **anti-monolith** file sizing and split policy.
 
 *If you detect any other deviation being introduced, report it in ASK mode with the smallest conforming alternative.*
