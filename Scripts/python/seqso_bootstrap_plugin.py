@@ -6,9 +6,8 @@ Run from repo root or pass --root <path>. Writes:
 - .../Source/SuperEQSOrchestrator/SuperEQSOrchestrator.Build.cs
 - .../Public/SeqsoVersion.h, SuperEQSOrchestrator.h
 - .../Private/SuperEQSOrchestratorModule.cpp, SeqsoTests.cpp
-- .../Resources/Icon128.png (1x1 transparent)
 """
-import argparse, base64, os, pathlib, sys
+import argparse, os, pathlib, sys
 
 UPLUGIN = r'''{
   "FileVersion": 3,
@@ -119,10 +118,6 @@ bool FSeqsoLoads::RunTest(const FString&)
 }
 '''
 
-# 1x1 transparent PNG
-PNG_B64 = ("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
-           "AAC0lEQVR42mP8/x8AAusB9YPk+1MAAAAASUVORK5CYII=")
-
 def write(p: pathlib.Path, content: bytes | str) -> None:
     p.parent.mkdir(parents=True, exist_ok=True)
     if isinstance(content, (bytes, bytearray)):
@@ -142,7 +137,6 @@ def main() -> int:
     src = base / "Source" / "SuperEQSOrchestrator"
     pub = src / "Public"
     prv = src / "Private"
-    res = base / "Resources"
 
     write(base / "SuperEQSOrchestrator.uplugin", UPLUGIN)
     write(src / "SuperEQSOrchestrator.Build.cs", BUILD_CS)
@@ -150,7 +144,6 @@ def main() -> int:
     write(pub / "SuperEQSOrchestrator.h", MODULE_H)
     write(prv / "SuperEQSOrchestratorModule.cpp", MODULE_CPP)
     write(prv / "SeqsoTests.cpp", TEST_CPP)
-    write(res / "Icon128.png", base64.b64decode(PNG_B64))
 
     print("[SEQSO] BOOTSTRAP: created plugin skeleton at", str(base))
     return 0
