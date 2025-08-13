@@ -1,0 +1,13 @@
+{
+  "FileVersion": 3,
+  "Version": 100,
+  "VersionName": "0.1.0",
+  "FriendlyName": "Super-EQSOrchestrator",
+  "Description": "Centralized, budgeted EQS orchestration so game teams never touch EQS directly.",
+  "Category": "AI",
+  "EnabledByDefault": true,
+  "Modules": [
+    { "Name": "SuperEQSOrchestrator", "Type": "Runtime", "LoadingPhase": "Default" }
+  ],
+  "SupportedTargetPlatforms": [ "Win64", "Linux", "Mac", "Android", "IOS" ]
+}
