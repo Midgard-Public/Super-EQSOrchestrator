@@ -1,233 +1,257 @@
-# AGENTS.md — Super-EQSOrchestrator (UE 5.6.1)
+AGENTS_SPEC
+===========
 
-> **Must read first.** This file defines how code agents (Codex) operate on this repo. Keep communications all-business and example-driven. No fluff.
-
----
-
-## 0) Jump Table (read by task)
-
-* **General Rules & Constants** → §1
-* **APPLY mode (code editing / changes)** → §2
-* **ASK mode (code interrogation / review only)** → §3
-* **Comms with Stealth! (status & findings format)** → §4
-* **Changelogs, Versions & Schemas** → §5
-* **Style, Docs & Formatting** → §6
-* **Errors, Assertions & Early-Outs** → §7
-* **Logging, Metrics & Categories** → §8
-* **Concurrency & Determinism** → §9
-* **Anti-Monolith policy & task sizing** → §10
-* **Integrations policy (StateTree, etc.)** → §11
-* **Platform & UE guardrails** → §12
-* **Stop conditions / timeboxing** → §13
-
----
-
-## 1) General Rules & Constants
-
-**Canonical names**
-
-* Project: **Super-EQSOrchestrator** (always this spelling).
-* Plugin folder/name: **SuperEQSOrchestrator**.
-* Runtime module: **SuperEQSOrchestrator**; optional Editor module later.
-* API macro prefix: **`SEQSO_API`**; C++ namespace prefix: **`SEQSO`**.
-
-**Versioning & platforms**
-
-* UE minimum: **5.6.1**.
-* Platforms: Win64, Linux, macOS, Android, iOS; console where permitted. Use only common UE AI facilities to maximize portability.
-* SemVer with CHANGELOG for every PR.
-
-**License**
-
-* MIT **+ Additional Terms**: (1) no resale; (2) include update link back to this repo in redistributions.
-
-**EQS ownership**
-
-* Game code must **not** issue EQS directly. Only this plugin may schedule/execute EQS queries and own the budget/collision policy.
-
-**Non-negotiables**
-
-* Deterministic tests. Never weaken tests to pass.
-* No hidden edits. Always list exact file paths changed; prefer full-file replacements for large rewrites.
-* UTF-8 source. No stringly-typed hacks; prefer `FName`/enums.
-
----
-
-## 2) APPLY mode (code editing / changes)
-
-**When to use:** You are landing code or docs.
-**Deliverables (all required):**
-
-1. **TITLE** line (Episode) — jokey but clear, non-violent, EQS/UE themed.
-2. **GOAL** — one short paragraph.
-3. **SCOPE (MUST DO)** — exact add/modify/remove paths; public API signatures; version pins/flags.
-4. **CONSTRAINTS** — restate relevant global constraints.
-5. **IMPLEMENTATION STEPS** — diffs or **full files** (preferred for new or heavily modified files).
-6. **TESTS** — unit/integration/automation names, locations, expected outputs/logs.
-7. **CLI/USAGE** (if relevant) — exact commands and exit codes.
-8. **ACCEPTANCE** — build/tests/CI must be green.
-9. **CHANGELOG** — prepend the exact TITLE line.
-10. **PR TITLE** — exactly the TITLE line.
-11. **Manual Human Verification** — explicit steps for Dan to click/run/observe.
-
-**File limits & structure**
-
-* Favor files ≤ **500 lines**. Split before they grow. Regions permitted (see §6).
-* Keep Runtime/editor code separated by module.
-
----
-
-## 3) ASK mode (code interrogation / review only)
-
-**When to use:** Static inspection, no writes.
-**Output format (strict):**
-
+```yaml
+AGENTS_SPEC: "SEQSO-AGENTS"
+SPEC_VERSION: "1.0.1"
+PROJECT:
+  NAME: "Super-EQSOrchestrator"
+  UE_MIN: "5.6.1"
+  MODULES:
+    RUNTIME: "SuperEQSOrchestrator"
+    EDITOR: "SuperEQSOrchestratorEditor"
+  API_PREFIX: "SEQSO_API"
+  NAMESPACE_PREFIX: "SEQSO"
+  VERSION_SEMVER: "0.1.0"
+  PLATFORMS: ["Win64","Linux","Mac","Android","IOS"]
+LICENSE:
+  BASE: "MIT"
+  ADDITIONAL_TERMS:
+    - "No resale of standalone Software"
+    - "Include update link https://github.com/YOURORG/SuperEQSOrchestrator in redistributions"
+CONTRACTS:
+  PR_TITLE_EQUALS_EPISODE: true
+  CHANGELOG_PREPEND_EPISODE: true
+  DETERMINISTIC_TESTS_ONLY: true
 ```
+
+INDEX (read-by-task)
+
+APPLY mode (code changes) → §APPLY
+
+ASK mode (interrogation) → §ASK
+
+PR/Changelog contract → §PR
+
+Style & Formatting → §STYLE
+
+Errors & Early-Outs → §ERRORS
+
+Logging & Metrics → §LOGGING
+
+Concurrency & Determinism → §CONCURRENCY
+
+Anti-Monolith thresholds → §ANTI_MONOLITH
+
+Integrations policy → §INTEGRATIONS
+
+Platform & UE guardrails → §PLATFORM
+
+Stop/Timebox conditions → §STOP
+
+Prompt templates → §TEMPLATES
+
+Naming quick reference → §NAMING
+
+Deviations vs Epic → §DEVIATIONS
+
+DIRECTIVES (stable IDs)
+General / Non-negotiables
+
+D001 MUST: No hidden edits; list exact paths changed; prefer full-file replacements for large rewrites.
+
+D002 MUST: Deterministic tests; never weaken tests to pass.
+
+D003 MUST: UTF-8 source; avoid stringly-typed hacks; prefer FName/enums.
+
+D004 MUST: Public headers require multi-block doc comments (see §STYLE.DOCS).
+
+D005 MUST: Use spaces (4) for indentation and Allman brace style in code.
+
+D006 MUST: Report assumptions explicitly when proceeding under ambiguity.
+
+D007 MUST: Keep Runtime and Editor code in separate modules.
+
+EQS Ownership
+
+D020 MUST: Game code MUST NOT issue EQS directly. Only this plugin may schedule/execute EQS and own budget/collision policy.
+
+Anti-monolith
+
+D030 SHOULD: Target ≤ 500 lines per file.
+
+D031 MUST: If a change touches > 20 files OR any single file > 800 lines post-change → STOP and propose split plan.
+
+D032 SHOULD: Prefer many small, focused units; use regions for structure.
+
+Formatting & Structure
+
+D040 MUST: Use #pragma region consistently in .h and .cpp with mirrored region names.
+
+D041 MUST: Include order: public API → UE headers → local headers; forward-declare where possible; include in .cpp.
+
+D042 SHOULD: Descriptive names for classes/functions/params; local variables may be compact.
+
+Errors & Assertions
+
+D050 MUST: Early-out on error paths; keep control flow simple.
+
+D051 MUST NOT: Use check (crash).
+
+D052 SHOULD NOT: Use ensure; when unavoidable, use ensureMsgf with clear logs and recovery path.
+
+D053 MUST: Pointer optimizations (if (Ptr = Source)) only when nullptr is expected; add comment explaining meaning of nullptr.
+
+Logging & Metrics
+
+D060 MUST: Root log category LogSEQSO; sub-categories LogSEQSO_Query, LogSEQSO_Budget, LogSEQSO_Collision, LogSEQSO_Orchestrator, LogSEQSO_Perf.
+
+D061 MUST: Centralize logging macros and verbosity configuration in a single header.
+
+D062 MUST NOT: Use VeryVerbose in Shipping.
+
+D063 SHOULD: Emit metrics hooks (timings/counts) suitable for Insights/CSV.
+
+Concurrency & Determinism
+
+D070 SHOULD: Build for concurrency (UE task graph/thread pools) with explicit thread-safety notes in public APIs.
+
+D071 MUST: Tests remain deterministic; fixed seeds if randomness is required.
+
+D072 SHOULD: Prefer lock-free or fine-grained locking with ownership comments.
+
+Integrations (surgical separation)
+
+D080 MUST: Optional integrations (e.g., StateTree) live as separate plugins depending on core. No optional code inside Runtime.
+
+Platform & UE Guardrails
+
+D090 MUST: Use only common UE AI facilities; avoid platform-specific APIs.
+
+D091 MUST: Respect UObject lifetimes & GC; no owning raw pointers to UObjects.
+
+Stop / Timebox
+
+D100 MUST: If task scope exceeds thresholds (§ANTI_MONOLITH) or required context is missing, STOP and output a re-plan with atomic steps.
+
+§APPLY — APPLY mode (code editing)
+REQUIRED OUTPUT (in this order):
+
+TITLE (Episode line; non-violent, EQS/UE-themed; include [vX.Y.Z])
+
+GOAL (≤1 paragraph)
+
+SCOPE (exact add/modify/remove paths; public API signatures; version pins/flags)
+
+CONSTRAINTS (restate relevant D-IDs)
+
+IMPLEMENTATION STEPS (diffs or full files; full files preferred for heavy rewrites)
+
+TESTS (unit/integration names, locations, expected outputs/logs)
+
+CLI/USAGE (commands and expected exit codes) — if relevant
+
+ACCEPTANCE (what must be green)
+
+CHANGELOG (prepend exact TITLE line)
+
+PR TITLE (exact TITLE line)
+
+Manual Human Verification (click/run/expect steps)
+
+§ASK — ASK mode (interrogation; no writes)
+Use this exact finding format:
+
+```vbnet
 file:line  → finding_type  → concise_risk
-Context: (≤3 lines of code or description)
-Why: (1–2 lines)
-Fix: (single, concrete step or link to APPLY task)
+Context: (≤3 lines)
+Why: (≤2 lines)
+Fix: (single concrete step or APPLY-reference)
 ```
+Rules:
 
-* No task generation unless explicitly requested.
-* Cite only paths that exist in the repo. If missing, note “not found” and stop.
+No task generation unless explicitly requested.
 
----
+Cite only existing paths; if missing, say “not found” and STOP.
 
-## 4) Comms with Stealth! (status & findings)
+§PR — PR/Changelog Contract
+PR title == Episode line.
 
-* Keep it brief, structured, and actionable.
-* Start with **Answer-first** summary (≤3 bullets), then details.
-* Call out **assumptions** explicitly when ambiguity exists.
-* If blocked, state **what’s missing** and propose 1–2 minimal options.
+Prepend Episode line to CHANGELOG.md.
 
----
+Manual Human Verification required in PR body.
 
-## 5) Changelogs, Versions & Schemas
+Each PR must list exact file paths changed.
 
-* Every PR **prepends** the Episode line to `CHANGELOG.md`.
-* Include SemVer bump when public Runtime API changes or behavior meaningfully shifts.
-* **Schema/IDL/config changes** must include:
+§STYLE — Style, Docs & Formatting
+DOCS:
 
-  * Migration notes (old → new).
-  * Versioned loaders or guards.
-  * Tests that load both previous and new forms.
+Public API elements in headers (UCLASS, USTRUCT, UENUM, UFUNCTION, UPROPERTY, public methods) require multi-block comments with these labeled fields:
 
-**Episode line template**
+Summary, Usage, Parameters (name→intent/range/units), Returns, Thread-safety, Preconditions, Postconditions, Errors/Logs, Performance.
+CODE:
 
+Spaces (4) for indentation; Allman braces:
+
+```pgsql
+Statement
+{
+    Statement
+}
 ```
-[Epic: <Series>] Episode <N> — <Jokey-but-clear tagline>: <concise scope> [vX.Y.Z]
-```
+Use #pragma region in .h and .cpp with mirrored structure.
 
----
+Names: describe what and what-for; avoid abbreviations in public APIs.
 
-## 6) Style, Docs & Formatting
+§ERRORS — Errors, Assertions & Early-Outs
+Early-out on errors; prefer explicit guard clauses.
 
-**Follow Epic guidelines** except where overridden here. If you find a conflict, report it in ASK mode with a one-line recommendation.
+check forbidden; ensure rare and only via ensureMsgf with logs + recovery.
 
-**Headers — public API documentation (mandatory)**
+Pointer optimizations only when nullptr expected; add comment.
 
-* Every **publicly accessible** element in a header (`UCLASS`, `USTRUCT`, `UENUM`, `UFUNCTION`, `UPROPERTY`, public methods) has a **multi-block doc comment**:
+§LOGGING — Logging & Metrics
+Categories: LogSEQSO, LogSEQSO_Query, LogSEQSO_Budget, LogSEQSO_Collision, LogSEQSO_Orchestrator, LogSEQSO_Perf.
 
-  ```
-  /**
-   * Summary: one-sentence purpose in plain English.
-   * Usage: short example or where/when to call.
-   * Parameters: name — intent and units/range.
-   * Returns: meaning and units/range.
-   * Thread-safety: safe/unsafe; required locks.
-   * Preconditions/Postconditions.
-   * Errors/Logs: conditions and categories emitted.
-   * Performance: notes on cost/complexity.
-   */
-  ```
-* Names are descriptive: **what it is and what it’s for**. Avoid abbreviations in public APIs. Local variables may be compact.
+Centralize macros/configuration; forbid VeryVerbose in Shipping.
 
-**Formatting**
+Provide metric hooks (Insights/CSV).
 
-* **Tabs** for indentation.
-* **Brace style (Allman)**:
+§CONCURRENCY — Concurrency & Determinism
+Concurrency allowed; document thread-safety in public APIs.
 
-  ```
-  Statement
-  {
-      Statement
-  }
-  ```
-* Use `#pragma region` consistently in both `.h` and `.cpp` to mirror structure:
+Deterministic tests with fixed seeds if randomness is used.
 
-  * Regions: Includes, Forward Decls, Constants, Types, Construction, Public API, Private Helpers, Logging, etc.
-* Include order: public API → UE headers → local headers; forward-declare whenever possible; include in `.cpp`.
+Prefer minimal synchronization with clear ownership.
 
----
+§ANTI_MONOLITH — Anti-Monolith Policy & Sizing
+Target ≤ 500 lines/file.
 
-## 7) Errors, Assertions & Early-Outs
+STOP if > 20 files touched or any single file > 800 lines; propose split.
 
-* **Early-out** on errors; keep control flow simple.
-* **`check`** is **disallowed** (crash).
-* **`ensure`** is **discouraged**; use only when something is truly wrong but survivable, and always **`ensureMsgf`** with a clear log message and recovery path.
-* Pointer micro-optimizations (`if (Ptr = Source)`) only when `nullptr` is an **expected** outcome; **comment explicitly** why and what null means at that site.
-* Prefer explicit guards with logged context; fail fast to the caller with status codes/results where appropriate.
+Use regions and helper types to maintain readability.
 
----
+§INTEGRATIONS — Optional Integrations
+Separate, tiny integration plugins (e.g., StateTree) depending on core.
 
-## 8) Logging, Metrics & Categories
+No optional integration code inside Runtime module.
 
-* Root category: **`LogSEQSO`**. Sub-categories:
+§PLATFORM — Platform & UE Guardrails
+Standard UE AI/EQS facilities; cross-platform friendly.
 
-  * `LogSEQSO_Query`, `LogSEQSO_Budget`, `LogSEQSO_Collision`, `LogSEQSO_Orchestrator`, `LogSEQSO_Perf`.
-* Provide macros for leveled logs and structured key=value fields.
-* Centralize logging configuration (verbosity, compile-time toggles) in one header.
-* No `VeryVerbose` in Shipping.
-* Emit **metrics hooks** (timings, counts) suitable for Unreal Insights or CSV sinks.
+Runtime-only module free of editor dependencies.
 
----
+Respect UObject lifetimes & GC.
 
-## 9) Concurrency & Determinism
+§STOP — Stop/Timebox Conditions
+If scope too large or context missing → STOP with a smaller, atomic plan.
 
-* Build for concurrency from the start. Allow background work on UE task graph/thread pools where appropriate.
-* Public APIs document thread-safety (see §6).
-* Deterministic tests only; fixed seeds if randomness is necessary.
-* Synchronization must be explicit and minimal; prefer lock-free or fine-grained locks with clear ownership comments.
+Report assumptions explicitly if proceeding.
 
----
+§TEMPLATES — Prompt & Finding Templates
+APPLY_PROMPT_TEMPLATE (verbatim)
 
-## 10) Anti-Monolith Policy & Task Sizing
-
-* Target ≤ **500 lines per file**. Prefer small, focused units.
-* Use regions and helper types to keep readability high.
-* If a file or function grows beyond comfortable size/complexity, **split it** and update includes/exports accordingly.
-* **Agent warning rule:** If a change touches > **20 files** or a single file > **800 lines**, stop and propose a plan to split into smaller Episodes.
-
----
-
-## 11) Integrations Policy (surgical separation)
-
-* Core lives in the **SuperEQSOrchestrator** plugin.
-* Any optional integration (e.g., **StateTree**) is a **separate, minimal plugin** that depends on core.
-* No optional integration code inside the Runtime module.
-
----
-
-## 12) Platform & UE Guardrails
-
-* Keep to standard UE AI/EQS facilities; avoid platform-specific APIs.
-* Runtime module contains **no editor dependencies**. Editor-only code lives in the Editor module.
-* Respect UObject lifetimes & GC (no owning raw pointers to UObjects).
-* Encoding: UTF-8 everywhere.
-
----
-
-## 13) Stop Conditions / Timeboxing
-
-* If a task cannot be completed within reasonable size/complexity (as indicated in §10) or required context is missing: **stop** and output a short re-plan with smaller, atomic steps.
-* When uncertain, state the **assumption** you will proceed with; otherwise halt in ASK mode and request the minimal missing fact.
-
----
-
-## 14) Prompt Template (verbatim; use in APPLY mode)
-
-```
+```pgsql
 TITLE
 [Epic: <Series>] Episode <N> — <Jokey-but-clear tagline>: <concise scope> [vX.Y.Z]
 
@@ -265,28 +289,32 @@ PR TITLE
 Manual Human Verification
 <precise steps & expected outcomes>
 ```
+ASK_FINDING_FORMAT (verbatim)
 
----
+```vbnet
+file:line  → finding_type  → concise_risk
+Context: (≤3 lines)
+Why: (≤2 lines)
+Fix: (single concrete step or APPLY-reference)
+```
+§NAMING — Quick Reference
+Modules: SuperEQSOrchestrator (Runtime), SuperEQSOrchestratorEditor (Editor).
 
-## 15) Example Categories & Naming (quick reference)
+Log categories: LogSEQSO*, see §LOGGING.
 
-* Modules: `SuperEQSOrchestrator` (Runtime), `SuperEQSOrchestratorEditor` (Editor).
-* Log categories: `LogSEQSO_*`.
-* Types: `USeqsoOrchestrator`, `USeqsoQuery`, `FSeqsoBudget`, etc.
-* Tests: `SEQSO.Basic.*`, `SEQSO.Query.*`, `SEQSO.Perf.*` (Automation framework).
+Types: USeqsoOrchestrator, USeqsoQuery, FSeqsoBudget, etc.
 
----
+Tests: SEQSO.Basic., SEQSO.Query., SEQSO.Perf.* (Automation).
 
-## 16) Deviations from Epic Guidelines (current)
+§DEVIATIONS — From Epic Guidelines
+Mandatory public-API multi-block docs in headers.
 
-* Enforced **public-API doc blocks** (multi-section) in headers.
-* Strong preference for **early-out** patterns and explicit guard clauses.
-* **`check` disallowed**; `ensure` rare + logged via `ensureMsgf`.
-* Mandatory use of **spaces** (4 spaces per indentation level) and **Allman braces** (matches Epic; reiterated here).
-* Aggressive **anti-monolith** file sizing and split policy.
+Strong preference for early-outs and explicit guards.
 
-*If you detect any other deviation being introduced, report it in ASK mode with the smallest conforming alternative.*
+check forbidden; ensure rare with ensureMsgf.
 
----
+Spaces (4) + Allman brace style reiterated.
 
-**End of AGENTS.md**
+Aggressive anti-monolith split policy and stop thresholds.
+
+END OF FILE
